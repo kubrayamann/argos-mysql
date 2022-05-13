@@ -11,7 +11,7 @@
     //mysqli_connect
     $db = mysqli_connect("localhost", "root", "", "deneme");
     if (!$db) {
-        die("Connection failed: " . mysqli_connect_error());
+        die("Bağlantı Hatası: " . mysqli_connect_error());
     }
     $sql = "SELECT id, ad, soyad, tel, cinsiyet, sehir FROM users";
     $result = mysqli_query($db, $sql); 
@@ -21,7 +21,7 @@
     <div class="container">
         <div class="row">
             <h2>Kullanıcı Bilgileri</h2>
-            <form action="/action_page.php">
+            <form action="<?php $PHP_SELF ?>" method="POST">
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="isim">Ad:</label>
                     <div class="col-sm-6">
@@ -37,20 +37,20 @@
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="tel">Telefon:</label>
                     <div class="col-sm-6">
-                        <input type="number" class="form-control" id="tel" placeholder="000 000 00 00" name="tel" required>
+                        <input type="number" class="form-control" id="tel" placeholder="0000000000" name="tel" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-sm-2" for="tel">Cinsiyet:</label> 
+                    <label class="control-label col-sm-2" for="cinsiyet">Cinsiyet:</label> 
                     <div class="col-sm-6">
-                        <input type="radio" name="cinsiyet" value="Kadın" required>Kadın
-                        <input type="radio" name="cinsiyet" value="Erkek">Erkek
+                        <input type="radio" id="cinsiyet" name="cinsiyet" value="Kadın" required>Kadın
+                        <input type="radio" id="cinsiyet" name="cinsiyet" value="Erkek">Erkek
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-sm-2" for="tel">Şehir:</label> 
                     <div class="col-sm-6">
-                    <select class="form-select" required> 
+                    <select name="sehir" class="form-select" required> 
                         <option value="İstanbul">İstanbul</option>
                         <option value="Ankara">Ankara</option>
                         <option value="İzmir">İzmir</option>
@@ -60,14 +60,30 @@
                 </br>
                 <div class="form-group">        
                     <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-primary">Ekle</button>
+                        <button type="submit" name="btn-ekle" class="btn btn-primary">Ekle</button>
                     </div>
                 </div>
             </form>
         </div>
+        <?php 
+            if(isset($_POST['btn-ekle'])){
+                $isim = $_POST['isim'];
+                $soyad = $_POST['soyad'];
+                $tel = $_POST['tel'];
+                $cinsiyet = $_POST['cinsiyet'];
+                $sehir = $_POST['sehir'];
+                $sql = "INSERT INTO users (ad, soyad, tel, cinsiyet, sehir) VALUES ('$isim', '$soyad', '$tel', '$cinsiyet', '$sehir')";
+                
+                if (mysqli_query($db, $sql)) {
+                    header('Location: index.php');
+                } else {
+                    echo "Error: " . $sql . "<br>" . mysqli_error($db);
+                }
+            } 
+        ?>
         </br></br>
         <div class="row">
-            <h2>Eklenen Bilgileri</h2>
+            <h2>Eklenen Bilgiler</h2>
             <table class="table">
             <thead class="thead-light">
                 <tr>
